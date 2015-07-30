@@ -9,9 +9,9 @@ greeve.prototype = new Bot();
 
 greeve.prototype.setup = function() {
     this.timer = 0;
-    this.attrStrength = 200;
-    this.safety = 1000;
-    this.repStrength = 150;
+    this.attrStrength = 8;
+    this.safety = 10;
+    this.repStrength = 2;
     this.movements = ['strafe-right', 'strafe-left', 'forward', 'backward'];
 };
 
@@ -51,7 +51,7 @@ greeve.prototype.getTarget = function() {
     target = this.getBotWithId(this.state.payload.targets[this.id]);
     if (target == undefined) {
         opponents = this.getOpponentBots();
-        closeness = 10000;
+        closeness = 50000;
         for (i in opponents) {
             distance = this.myDistanceToPoint(opponents[i].x, opponents[i].y);
             if (distance < closeness) {
@@ -87,13 +87,11 @@ greeve.prototype.run = function() {
 	target = this.getTarget();
 
 	// have I collided with a bot?
-	this.collided = false;
+	this.collidedWithBot = false;
 	if (this.collisions.length > 0) {
 		for (i in this.collisions) {
 			if (this.collisions[i].type == 'bot')
-				this.collided = true;
-            if (this.collisions[i].type == 'obstacles')
-                this.collided = true;
+				this.collidedWithBot = true;
 		}
 	}
 
@@ -126,7 +124,7 @@ greeve.prototype.run = function() {
 		} else if (cmd == 'wait' && distance < 150 && target.health > this.health) {
 			// move backwards, if the target is close enough and it's health is greater than my own.
 			cmd = "backward";
-		} else if (this.collided == true) {
+		} else if (this.collidedWithBot == true) {
             // move if collided with another bot
             cmd = "backward";
         }
